@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         applyPeriodicBorderCondition(particles, side, side);
 
         if (step % printAfterSteps == 0) {
-            updateTrajectories(particles, timeStep);
+            updateTrajectories(particles, time);
             auto totalEnergy = getTotalKineticEnergy(particles);
             energyFile << time << "," << (totalEnergy - initialEnergy) / totalEnergy << std::endl;
         }

@@ -35,6 +35,11 @@ struct Vector {
     double y;
     double z;
 
+    Vector cross(const Vector& b){
+        auto a = *this;
+        return {a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
+    }
+
     double getNorm() const {
         return std::sqrt(x * x + y * y + z * z);
     }
@@ -68,7 +73,7 @@ public:
         return 1.0 / this->mass * this->force;
     }
 
-    void updateTrajectory(double timeStep) {
+    void updateTrajectory(double currentTime) {
         auto previousTime = this->trajectory.back().t;
         PhasePoint newPoint{};
         newPoint.x = this->position.x;
@@ -77,12 +82,12 @@ public:
         newPoint.vx = this->velocity.x;
         newPoint.vy = this->velocity.y;
         newPoint.vz = this->velocity.z;
-        newPoint.t = previousTime + timeStep;
+        newPoint.t = currentTime;
         this->trajectory.emplace_back(newPoint);
     }
 
-    Particle(double mass, Vector position, Vector velocity) :
-            mass(mass), position(position), velocity(velocity), previousVelocity(velocity) {
+    Particle(double mass, Vector position, Vector velocity, double charge = 0) :
+            mass(mass), position(position), velocity(velocity), previousVelocity(velocity), charge(charge) {
         PhasePoint newPoint{};
         newPoint.x = this->position.x;
         newPoint.y = this->position.y;
@@ -98,7 +103,7 @@ public:
     Vector velocity;
     Vector previousVelocity;
     Vector position;
-    double mass;
+    double mass, charge;
     std::vector<PhasePoint> trajectory;
     double nextCollisionTime{0};
 };
@@ -184,9 +189,9 @@ void updatePositions(std::vector<Particle> &particles, double timeStep) {
     }
 }
 
-void updateTrajectories(std::vector<Particle> &particles, double timeStep) {
+void updateTrajectories(std::vector<Particle> &particles, double currentTime) {
     for (auto &particle : particles) {
-        particle.updateTrajectory(timeStep);
+        particle.updateTrajectory(currentTime);
     }
 }
 

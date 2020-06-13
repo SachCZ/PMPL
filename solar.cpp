@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
         updatePositions(particles, timeStep);
 
         if (step % printAfterSteps == 0){
-            updateTrajectories(particles, timeStep);
+            updateTrajectories(particles, time);
 
             auto kineticEnergy = getTotalKineticEnergy(particles);
             auto totalEnergy = potentialEnergy + kineticEnergy;

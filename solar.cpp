@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
     auto steps = (int) std::round(finalTime/timeStep);
     int printAfterSteps = steps / printCount;
 
+    //Set how potential energy and force are calculated, see NewtonGravitationalLaw and NewtonPotentialEnergy
     NewtonGravitationalLaw forceCalculator;
     NewtonPotentialEnergy potentialCalculator;
 
@@ -64,10 +65,12 @@ int main(int argc, char* argv[]) {
             potentialEnergy = getTotalPotentialEnergy(particles, potentialCalculator);
         }
 
-        setAllForces(particles, {0, 0});
-        updateForces(particles, forceCalculator);
-        updateVelocities(particles, timeStep);
-        updatePositions(particles, timeStep);
+        //main routine
+        setAllForces(particles, {0, 0}); //zero out the forces
+        updateForces(particles, forceCalculator); //calculate new forces see NewtonGravitationalLaw
+        //Note that both current and previous velocity are tracked to take full advantage of the leapfrog scheme
+        updateVelocities(particles, timeStep); //just v_previous = v_current; v_current = a*t;
+        updatePositions(particles, timeStep); //just x = v*t
 
         if (step % printAfterSteps == 0){
             updateTrajectories(particles, time);

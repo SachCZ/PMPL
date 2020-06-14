@@ -18,6 +18,20 @@ Kód je okomentován přímo v souborech. Komntáře jsou u funkcí, kterým je 
 pro pochopení funkcionality. Neokomentované funkce by měli mít zřejmý účel, k jehož pochopení
 postačují jméno a parametry.
 
+Dále platí, že kód je 80% setup 20% actual work. Pro usnadnění čtení je zaveden komnetář
+```
+//main routine
+...
+```
+který označuje pasáže, kde je prováděn výpočet. Dále je pak zaveden komntář:
+```
+//see
+```
+Ten odkazuje na další funkce nezbytné pro pochopení.
+
+Ve výsledku tedy v daném `.cpp` souboru udělat textové
+vyhledávání `main routine` pro zvýraznění důležitých pasáží.
+
 Krátký přehled výsledků
 -----------------------
 Pojmenování jednotlivých úloh je zde zavedeno pro snažší orientaci. Nevystihuje však celou podstatu

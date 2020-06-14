@@ -238,6 +238,7 @@ std::vector<Particle> generateInRectangle(size_t count, Interval sideX, Interval
     return result;
 }
 
+//In 2D choose a new random direction for the particle while preserving energy
 void collide(Particle &particle, double backgroundParticleMass) {
     auto m1 = particle.mass;
     auto m2 = backgroundParticleMass;
@@ -256,6 +257,8 @@ void setNextCollisionTime(Particle& particle, double maxFrequency){
     particle.nextCollisionTime += - 1 / maxFrequency * std::log(1 - R01.get());
 }
 
+//Each particle tracks its internal time of next collision. Collide the particles if the time comes and again set this time randomly.
+//see collide(particle)
 template<typename Frequency>
 void collide(
         std::vector<Particle> &particles,
@@ -282,6 +285,7 @@ void initCollisionTimes(std::vector<Particle>& particles, double maxFrequency){
     }
 }
 
+//Simply set each coordinate of velocity to be from normal distribution
 void setThermalVelocities(std::vector<Particle> &particles, double temperature) {
     std::random_device dev;
     std::default_random_engine generator(dev());

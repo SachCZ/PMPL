@@ -24,6 +24,10 @@ int main(int argc, char *argv[]) {
             side,
             9.10938356e-31 //mass of electron
     );
+
+    //main routine
+    //Sample the velocities from Maxwell distribution
+    //See setThermalVelocities in particles.h
     setThermalVelocities(particles, 11600);
     initCollisionTimes(particles, maxCollisionFrequency);
 
@@ -37,9 +41,17 @@ int main(int argc, char *argv[]) {
 
     while (time < finalTime) {
         updatePositions(particles, timeStep);
+
+        //main routine
+        //Apply collisions
+        //see collide in particles.h
         collide(particles, backgroundParticleMass, time, maxCollisionFrequency, [](double speed){return 0.5e7;});
 
         sideSampler.sample(particles, side);
+
+        //main routine
+        //Apply periodic boundary conditions
+        //Check if particle escaped and set it to the other side
         applyPeriodicBorderCondition(particles, side, side);
 
         if (step % printAfterSteps == 0) {

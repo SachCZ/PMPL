@@ -89,6 +89,8 @@ SorResult<T> sor(double step, double omega, const Vector2D<T> &initial, const Ve
         maxResidual = 0;
         for (uint i = 1; i < phi.sizeX - 1; i++) {
             for (uint j = 1; j < phi.sizeY - 1; j++) {
+                //main routine
+                //SOR step
                 auto currentResidual =
                         -4 * phi[{i, j}] + phi[{i - 1, j}] + phi[{i + 1, j}] + phi[{i, j - 1}] + phi[{i, j + 1}] -
                         r[{i, j}] * step * step;
@@ -96,7 +98,7 @@ SorResult<T> sor(double step, double omega, const Vector2D<T> &initial, const Ve
                 if (std::abs(currentResidual) > maxResidual) maxResidual = std::abs(currentResidual);
             }
         }
-    } while (maxResidual > 1e-5 * step * step);
+    } while (maxResidual > 1e-5 * step * step); // maxResidual is max(|residual|)
 
     double norm = 0;
     for (uint i = 1; i < phi.sizeX - 1; i++) {
@@ -126,6 +128,7 @@ ScalingTestResult scalingTest(uint gridSize, double omega = 1.84){
     Vector2D<double> r(gridSize);
     double step = 1.0 / (gridSize - 1);
 
+    //Set border values, could be anything, eg. 2 electrodes
     for (uint i = 0; i < gridSize; i++) {
         for (uint j = 0; j < gridSize; j++) {
             if (isBorder({i, j}, gridSize)) {

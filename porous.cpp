@@ -105,13 +105,15 @@ private:
     }
 };
 
+//main routine
 bool pathExists(Grid &grid) {
     Que que;
     que.add(grid.firstRow());
     while (!que.isEmpty()) {
-        auto currentNode = que.pop();
-        if (grid.hasInLastRow(currentNode))
+        auto currentNode = que.pop(); //Take one node from the que
+        if (grid.hasInLastRow(currentNode)) //if the currentNode is in the last row we reached the destination and the path exists
             return true;
+        //Add valid neighbours to the que (!isOutside(neighbour) the grid && !isBlocked(neighbour) (being set randomly) &&!isVisited(neighbour) alreadyVisited by the algorithm)
         auto neighbours = grid.getExplorableNeighbours(currentNode);
         grid.markAsVisited(neighbours);
         que.add(neighbours);
@@ -123,6 +125,9 @@ double estimatePassProbability(Grid& grid, double blockedProbability, int sample
     int existCount = 0;
     for (int i = 0; i < sampleCount; i++){
         grid.fillRandomly(blockedProbability);
+
+        //main routine
+        //see pathExists
         if(pathExists(grid)) existCount++;
     }
     return (double) existCount / sampleCount;

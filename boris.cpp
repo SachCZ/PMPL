@@ -35,10 +35,15 @@ void run_boris(double timeStep, const std::string& filename) {
 
     while (time < finalTime){
 
+        //main routine
+        //These are the only important line, everything else is setup
+        //Update the particle velocities based on the original Boris algorithm
         borisUpdateVelocity(particles, timeStep, E, B);
+        //Just update the position based on velocity
         updatePositions(particles, timeStep);
 
         if (step % printAfterSteps == 0){
+            //prepare it to be saved, no physics here
             updateTrajectories(particles, time);
         }
 

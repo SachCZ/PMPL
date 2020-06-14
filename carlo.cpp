@@ -67,6 +67,7 @@ private:
     mutable std::uniform_int_distribution<> distribution{0, 3};
 };
 
+//Randomly add i, j +/- 1 to the current point until a boundary point is found
 template<typename Function>
 GridPoint WanderRandomly(const GridPoint &from, Function isBoundary) {
     static const RandomDirection getRandomDirection;
@@ -136,8 +137,16 @@ ScalingTestResult scalingTest(int gridSize, int wandersCount = 1000){
     const GridPoint startPoint{(gridSize-1)/2, (gridSize-1)/2};
     double potential;
     auto duration = timeIt([&](){
+
+
+        //main routine
         std::vector<double> randomBoundaryValues(wandersCount);
+
+        //Call function wanderRandomly number of times and save found boundary values to randomBoundaryValues
+        //See wanderRandomly
         generateCarloValues(randomBoundaryValues.begin(), randomBoundaryValues.end(), startPoint, grid);
+
+        //Calculate mean - this is equivalent to finding the probabilities a sum by boundary_value*probability
         potential = std::accumulate(randomBoundaryValues.begin(), randomBoundaryValues.end(), 0.0) / wandersCount;
     });
     return {duration, potential};

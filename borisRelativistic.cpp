@@ -46,6 +46,10 @@ int main() {
 
     while (time < finalTime) {
 
+        //main routine
+        //These are the only important line, everything else is setup
+        //Update the particle velocities based on the relativistic Boris algorithm
+        //Note that relativisticVelocity = gamma * particle.velocity
         borisRelativisticUpdateVelocity(particles, timeStep, E, B);
         updatePositions(particles, timeStep);
 

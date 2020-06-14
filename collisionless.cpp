@@ -22,6 +22,10 @@ int main(int argc, char *argv[]) {
             side,
             9.10938356e-31 //mass of electron
     );
+
+    //main routine
+    //Sample the velocities from Maxwell distribution
+    //See setThermalVelocities in particles.h
     setThermalVelocities(particles, 11600);
 
     std::ofstream energyFile("data/collisionless_energy.csv");
@@ -33,9 +37,16 @@ int main(int argc, char *argv[]) {
     SideSampler sideSampler;
 
     while (time < finalTime) {
+
+        //main routine
+        //Propagate the particles
         updatePositions(particles, timeStep);
 
         sideSampler.sample(particles, side);
+
+        //main routine
+        //Apply periodic boundary conditions
+        //Check if particle escaped and set it to the other side
         applyPeriodicBorderCondition(particles, side, side);
 
         if (step % printAfterSteps == 0) {

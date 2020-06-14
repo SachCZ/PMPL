@@ -26,6 +26,7 @@ if __name__ == '__main__':
     earth_data = data[:, 7:13]
     moon_data = data[:, 13:19]
 
+    plt.title("Solar system simulation")
     plt.plot(sun_data[:, 0], sun_data[:, 1], label="Sun")
     plt.plot(earth_data[:, 0], earth_data[:, 1], label="Earth")
     plt.plot(moon_data[:, 0], moon_data[:, 1], label="Moon")
@@ -36,6 +37,7 @@ if __name__ == '__main__':
     plt.savefig(path.join(loc, "../images/solar.png"))
     plt.clf()
 
+    plt.title("Solar system simulation zoom")
     plt.plot(sun_data[:, 0], sun_data[:, 1], label="Sun")
     plt.plot(earth_data[:, 0], earth_data[:, 1], label="Earth")
     plt.plot(moon_data[:, 0], moon_data[:, 1], label="Moon")

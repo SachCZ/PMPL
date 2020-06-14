@@ -11,6 +11,7 @@ if __name__ == '__main__':
 
     plt.plot(blocked_probability, pass_probability)
     plt.grid()
+    plt.title("Porous material")
     plt.xlabel("Infill probability")
     plt.ylabel("Pass through probability")
     plt.savefig(path.join(loc, "../images/porous.png"))

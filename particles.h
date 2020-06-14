@@ -87,7 +87,12 @@ public:
     }
 
     Particle(double mass, Vector position, Vector velocity, double charge = 0) :
-            mass(mass), position(position), velocity(velocity), previousVelocity(velocity), charge(charge) {
+            mass(mass),
+            position(position),
+            velocity(velocity),
+            previousVelocity(velocity),
+            relativisticVelocity(velocity),
+            charge(charge) {
         PhasePoint newPoint{};
         newPoint.x = this->position.x;
         newPoint.y = this->position.y;
@@ -100,9 +105,10 @@ public:
     }
 
     Vector force{0, 0};
+    Vector position;
     Vector velocity;
     Vector previousVelocity;
-    Vector position;
+    Vector relativisticVelocity;
     double mass, charge;
     std::vector<PhasePoint> trajectory;
     double nextCollisionTime{0};

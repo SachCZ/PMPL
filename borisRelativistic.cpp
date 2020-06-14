@@ -1,20 +1,30 @@
 #include <chrono>
 #include "particles.h"
 
-void borisUpdateVelocity(std::vector<Particle>& particles, double timeStep, const Vector& E, const Vector& B){
-    for (auto& particle : particles){
+double getGamma(double velocity) {
+    auto c = 299792458;
+    auto u = velocity;
+    auto result = std::sqrt(1 + (u / c) * (u / c));
+    return result;
+}
+
+void
+borisRelativisticUpdateVelocity(std::vector<Particle> &particles, double timeStep, const Vector &E, const Vector &B) {
+    for (auto &particle : particles) {
         auto q = particle.charge;
         auto dt = timeStep;
         auto m = particle.mass;
         auto b = B.getNorm();
-        auto v1 = particle.velocity + q*dt/2/m*E;
-        auto f1 = std::tan(q*dt/2/m * b) / b;
+        auto gamma = getGamma(particle.relativisticVelocity.getNorm());
+        auto v1 = particle.relativisticVelocity + q * dt / 2 / m * E;
+        auto f1 = std::tan(q * dt / 2 / m / gamma * b) / b;
         auto v2 = v1 + f1 * (v1.cross(B));
-        auto f2 = 2*f1 / (1 + f1*f1 * (b*b));
+        auto f2 = 2 * f1 / (1 + f1 * f1 * (b * b));
         auto v3 = v1 + f2 * (v2.cross(B));
 
         particle.previousVelocity = particle.velocity;
-        particle.velocity = v3 + q*dt/2/m*E;
+        particle.relativisticVelocity = v3 + q * dt / 2 / m * E;
+        particle.velocity = 1 / gamma * particle.relativisticVelocity;
     }
 }
 
@@ -24,22 +34,22 @@ int main() {
     double timeStep = 1e-13;
     double finalTime = 1e-10;
     int printCount = 1000;
-    auto steps = (int) std::round(finalTime/timeStep);
+    auto steps = (int) std::round(finalTime / timeStep);
     int printAfterSteps = steps / printCount;
 
     Vector E = {1e8, 0, 0};
     Vector B = {0, 0, 1};
-    Particle particle(9.10938356e-31, {0,0,0},{2e8,0,0}, 1.60217662e-19);
+    Particle particle(9.10938356e-31, {0, 0, 0}, {0, 1e8, 0}, 1.60217662e-19);
     std::vector<Particle> particles = {particle};
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    while (time < finalTime){
+    while (time < finalTime) {
 
-        borisUpdateVelocity(particles, timeStep, E, B);
+        borisRelativisticUpdateVelocity(particles, timeStep, E, B);
         updatePositions(particles, timeStep);
 
-        if (step % printAfterSteps == 0){
+        if (step % printAfterSteps == 0) {
             updateTrajectories(particles, time);
         }
 
@@ -53,5 +63,5 @@ int main() {
 
     std::cout << "Execution took: " << duration << "s." << std::endl;
 
-    saveTrajectories("data/boris_trajectories.csv", particles);
+    saveTrajectories("data/boris_relativistic_trajectories.csv", particles);
 }

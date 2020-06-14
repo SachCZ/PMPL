@@ -12,12 +12,12 @@ if __name__ == '__main__':
 
     plt.plot(particle_data[:, 0], particle_data[:, 1], ".", label="Boris")
 
-    E = 1
+    E = 1e8
     B = 1
-    Q = 1
-    m = 1
-    v0x = 1
-    v0y = 1
+    Q = 1.60217662e-19
+    m = 9.10938356e-31
+    v0x = 2e8
+    v0y = 0
 
     wc = Q * B / m
     vd = E / B
@@ -25,6 +25,7 @@ if __name__ == '__main__':
     analytic_y = 1 / wc*(v0x*np.cos(wc*t) + (v0y + vd)*np.sin(wc*t)) - vd*t - 1/wc*v0x
     plt.plot(analytic_x, analytic_y, label="Analytic")
 
+    plt.title("Boris")
     plt.xlabel("$x$ [m]")
     plt.ylabel("$y$ [m]")
     plt.grid()

@@ -3,16 +3,8 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
-#include <chrono>
-
-template <typename Function>
-double timeIt(Function function) {
-    auto start = std::chrono::high_resolution_clock::now();
-    function();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto nanosecondDuration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    return nanosecondDuration * 1e-9;
-}
+#include "utils.h"
+#include <fstream>
 
 struct GridPoint {
     int i = 0, j = 0;
@@ -126,7 +118,7 @@ double boundaryFunction(const Point<double>& point){
 
 template <typename ForwardIt, typename T>
 void generateCarloValues(ForwardIt first, ForwardIt last, const GridPoint& startPoint, const RectGrid<T>& grid){
-    static const BoundaryChecker<T> isBoundary(grid);
+    const BoundaryChecker<T> isBoundary(grid);
     std::generate(first, last, [&](){
         auto gridPoint = WanderRandomly(startPoint, isBoundary);
         auto realPoint = grid.getRealPoint(gridPoint);
@@ -134,21 +126,29 @@ void generateCarloValues(ForwardIt first, ForwardIt last, const GridPoint& start
     });
 }
 
-int main() {
+struct ScalingTestResult {
+    double duration;
+    double potential;
+};
 
-    auto duration = timeIt([](){
-        const int gridSize = 41;
-        const uint wandersCount = 100000;
-        RectGrid<double> grid(gridSize, 1.0);
-        const GridPoint startPoint{20, 20};
-
+ScalingTestResult scalingTest(int gridSize, int wandersCount = 1000){
+    RectGrid<double> grid(gridSize, 1.0);
+    const GridPoint startPoint{(gridSize-1)/2, (gridSize-1)/2};
+    double potential;
+    auto duration = timeIt([&](){
         std::vector<double> randomBoundaryValues(wandersCount);
         generateCarloValues(randomBoundaryValues.begin(), randomBoundaryValues.end(), startPoint, grid);
-
-        auto potential = std::accumulate(randomBoundaryValues.begin(), randomBoundaryValues.end(), 0.0) / wandersCount;
-        std::cout << potential << std::endl;
+        potential = std::accumulate(randomBoundaryValues.begin(), randomBoundaryValues.end(), 0.0) / wandersCount;
     });
-    std::cout << "Execution took: " << duration << "s." << std::endl;
+    return {duration, potential};
+}
 
+int main() {
+    std::ofstream file("data/carlo.csv");
+    for (int gridSize = 20; gridSize < 202; gridSize=gridSize+2){
+        auto result = scalingTest(gridSize);
+        file << gridSize << "," << result.duration << std::endl;
+    }
+    std::cout << scalingTest(202).potential - boundaryFunction({0.5,0.5}) << std::endl;
     return 0;
 }

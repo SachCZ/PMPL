@@ -6,11 +6,17 @@ from matplotlib import pyplot as plt
 if __name__ == '__main__':
     loc = pathlib.Path(__file__).parent.absolute()
 
-    data = np.genfromtxt(path.join(loc, "../data/boris_trajectories.csv"), delimiter=",")
+    data = np.genfromtxt(path.join(loc, "../data/boris_trajectories_e-12.csv"), delimiter=",")
     t = data[:, 0]
     particle_data = data[:, 1:7]
 
-    plt.plot(particle_data[:, 0], particle_data[:, 1], ".", label="Boris")
+    plt.plot(particle_data[:, 0], particle_data[:, 1], ".", label="Boris $\\Delta t$=1e-12")
+
+    data = np.genfromtxt(path.join(loc, "../data/boris_trajectories_e-16.csv"), delimiter=",")
+    t = data[:, 0]
+    particle_data = data[:, 1:7]
+
+    plt.plot(particle_data[:, 0], particle_data[:, 1], ".", label="Boris $\\Delta t$=1e-16")
 
     E = 1e8
     B = 1

@@ -18,12 +18,11 @@ void borisUpdateVelocity(std::vector<Particle>& particles, double timeStep, cons
     }
 }
 
-int main() {
+void run_boris(double timeStep, const std::string& filename) {
     double time = 0;
     int step = 0;
-    double timeStep = 1e-13;
     double finalTime = 1e-10;
-    int printCount = 1000;
+    int printCount = 100;
     auto steps = (int) std::round(finalTime/timeStep);
     int printAfterSteps = steps / printCount;
 
@@ -53,5 +52,11 @@ int main() {
 
     std::cout << "Execution took: " << duration << "s." << std::endl;
 
-    saveTrajectories("data/boris_trajectories.csv", particles);
+    saveTrajectories(filename, particles);
 }
+
+int main(int argc, char *argv[]) {
+    run_boris(1e-12, "data/boris_trajectories_e-12.csv");
+    run_boris(1e-16, "data/boris_trajectories_e-16.csv");
+}
+

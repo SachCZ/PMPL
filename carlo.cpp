@@ -149,6 +149,11 @@ int main() {
         auto result = scalingTest(gridSize);
         file << gridSize << "," << result.duration << std::endl;
     }
-    std::cout << scalingTest(202).potential - boundaryFunction({0.5,0.5}) << std::endl;
+
+    std::ofstream filePrecision("data/carlo_precision.csv");
+    for (int i = 0; i < 100; i++){
+        filePrecision << scalingTest(202).potential << std::endl;
+    }
+
     return 0;
 }

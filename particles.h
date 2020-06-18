@@ -306,7 +306,7 @@ public:
     void sample(std::vector<Particle> &particles, const Interval &sideX) {
         for (const auto &particle : particles) {
             if (particle.position.x > sideX.end || particle.position.x < sideX.begin) {
-                this->speeds.emplace_back(particle.velocity.getNorm());
+                this->speeds.emplace_back(particle.velocity);
             }
         }
     }
@@ -314,11 +314,12 @@ public:
     void save(const std::string &filename) const {
         std::ofstream file(filename);
         for (const auto &speed : this->speeds) {
-            file << speed << std::endl;
+            file << speed.x << "," << speed.y << "," << speed.z << "," << std::endl;
         }
     }
 
 private:
-    std::vector<double> speeds;
+    std::vector<Vector> speeds;
 };
+
 #endif //PMPL_PARTICLES_H

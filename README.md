@@ -78,8 +78,15 @@ metodou Monte Carlo budou výhodnější pro velké sítě, kde chceme určit po
 **Zdroj částic bez srážek**
 
 Byl naprgramován homogení termální zdroj částic bez úvážování srážek. Bylo zaznamenáno rozdělení
-velikostí rychlostí a to jak objemové na obrázku `collisionless_distribution.png` tak pro částice procházející
-jednou stranou výpočetní oblasti `collisionless_side_distribution`. Pozorovaná kinetická energie
+velikostí rychlostí a to jak objemové na obrázku `collisionless_distribution.png`. Dále
+pak bylo vytvořeno srovnání s rozdělením rychlostí částic procházejících
+jednou stranou výpočetní oblasti `collisionless_distribution_compare.png`. Zde je i porovnání
+rozdělení složek rychlosti. Je patrné, že stranou kolmou na osu x procházejí hlavně částice
+s nenulovou složkou rychlosti x a to pravděpodobně i několikrát v průběhu simulace, pokud
+je tato rychlost dostatečně velká. Toto vede na preferenci celkově rychlejších částic a posuvu
+směrem k vyšším teplotám v porovnání s celkovým objemovým rozdělením velikostí rychlostí.
+ 
+Pozorovaná kinetická energie
 samozřejmě zůstala v průběhu simulace konstantní, viz. `collisionless_energy.png`.
 Dale bylo ze 10000 částic vybráno 100 a jejich trajektorie byly vyobrazeny v krátké animaci
 `collisionless_trajectories.mp4`.

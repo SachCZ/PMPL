@@ -58,16 +58,6 @@ if __name__ == '__main__':
     plt.savefig(path.join(loc, '../images/collisionless_energy.png'))
     plt.clf()
 
-    data = np.genfromtxt(path.join(loc, '../data/collisionless_side_speeds.csv'), delimiter=",")
-    plt.hist(data, density=True, bins=30)
-    plt.ylabel('f [-]')
-    plt.xlabel('$|v|$ [m$\\cdot$s$^{-1}$]')
-    plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-    plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-    plt.title("Collisionless gas side speed distribution")
-    plt.savefig(path.join(loc, '../images/collisionless_side_distribution.png'))
-    plt.clf()
-
     data = np.genfromtxt(path.join(loc, "../data/collisionless_trajectories.csv"), delimiter=",")
 
     j = -1

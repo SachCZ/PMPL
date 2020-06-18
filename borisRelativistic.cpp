@@ -24,6 +24,7 @@ borisRelativisticUpdateVelocity(std::vector<Particle> &particles, double timeSte
 
         particle.previousVelocity = particle.velocity;
         particle.relativisticVelocity = v3 + q * dt / 2 / m * E;
+        gamma = getGamma(particle.relativisticVelocity.getNorm());
         particle.velocity = 1 / gamma * particle.relativisticVelocity;
     }
 }

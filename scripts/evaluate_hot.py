@@ -9,7 +9,7 @@ matplotlib.use("Agg")
 
 if __name__ == '__main__':
     loc = pathlib.Path(__file__).parent.absolute()
-    data = np.genfromtxt(path.join(loc, "../data/collisional_trajectories.csv"), delimiter=",")
+    data = np.genfromtxt(path.join(loc, "../data/hot_trajectories.csv"), delimiter=",")
     t = data[:, 0]
 
     fig = plt.figure()
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     def init():
         line.set_data([], [])
-        title.set_text("Collisional gas, time 0 s")
+        title.set_text("Hot background gas, time 0 s")
         return line, title
 
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         x = data[j, 1::(6 * 100)]
         y = data[j, 2::(6 * 100)]
         line.set_data(x, y)
-        title.set_text("Collisional gas, time {} s".format(data[j, 0]))
+        title.set_text("Hot background gas, time {} s".format(data[j, 0]))
         return line, title
 
 
@@ -40,25 +40,8 @@ if __name__ == '__main__':
 
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
-    anim.save(path.join(loc, '../images/collisional_trajectories.mp4'), writer=writer)
+    anim.save(path.join(loc, '../images/hot_trajectories.mp4'), writer=writer)
     plt.clf()
-
-    data = np.genfromtxt(path.join(loc, "../data/collisional_energy.csv"), delimiter=",")
-
-    time = data[:, 0]
-    energy = data[:, 1]
-
-    plt.plot(time, energy, ".")
-    plt.xlabel('$t$ [s]')
-    plt.ylabel('$\\Delta E$ [J]')
-
-    plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-    plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-    plt.title("Collisional gas energy")
-    plt.savefig(path.join(loc, '../images/collisional_energy.png'))
-    plt.clf()
-
-    data = np.genfromtxt(path.join(loc, "../data/collisional_trajectories.csv"), delimiter=",")
 
     j = -1
     v_x = data[j, 4::6]
@@ -83,5 +66,22 @@ if __name__ == '__main__':
     plt.legend()
     plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
     plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-    plt.title("Collisional gas speed distribution")
-    plt.savefig(path.join(loc, '../images/collisional_distribution.png'))
+    plt.title("Hot gas speed distribution")
+    plt.savefig(path.join(loc, '../images/hot_distribution.png'))
+    plt.clf()
+
+    data = np.genfromtxt(path.join(loc, "../data/hot_energy.csv"), delimiter=",")
+
+    time = data[:, 0]
+    energy = data[:, 1]
+
+    plt.plot(time, energy, "-")
+    plt.xlabel('$t$ [s]')
+    plt.ylabel('$\\Delta E$ [J]')
+
+    plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
+    plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+    plt.title("Hot gas energy")
+    plt.savefig(path.join(loc, '../images/hot_energy.png'))
+    plt.clf()
+

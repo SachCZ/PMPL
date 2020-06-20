@@ -238,6 +238,39 @@ std::vector<Particle> generateInRectangle(size_t count, Interval sideX, Interval
     return result;
 }
 
+class VectorMaxwellDistribution {
+public:
+    Vector sample(double mass, double temperature){
+        double mean = 0;
+        auto T = temperature;
+        auto m = mass;
+        double stddev = std::sqrt(k * T / m);
+        std::normal_distribution<double> distribution(mean, stddev);
+        return {distribution(generator), distribution(generator), distribution(generator)};
+    }
+private:
+    const double k = 1.38064852e-23;
+    std::random_device dev;
+    std::default_random_engine generator{dev()};
+};
+
+void collide(Particle &particle, double backgroundParticleMass, double backgroundParticlesTemperature) {
+    static VectorMaxwellDistribution maxwell;
+    auto m1 = particle.mass;
+    auto m2 = backgroundParticleMass;
+    auto v1 = particle.velocity;
+    auto v2 = maxwell.sample(backgroundParticleMass, backgroundParticlesTemperature);
+
+    Random R01;
+    auto angle = 2 * M_PI * R01.get();
+    auto vr3 = v1 - v2;
+    auto xyNorm = std::sqrt(vr3.x*vr3.x + vr3.y*vr3.y);
+    auto wx = 1/(m1 + m2) * (m1*v1.x + m2*v2.x);
+    auto wy = 1/(m1 + m2) * (m1*v1.y + m2*v2.y);
+    particle.velocity.x = m2 / (m1 + m2) * xyNorm*std::cos(angle) + wx;
+    particle.velocity.y = m2 / (m1 + m2) * xyNorm*std::sin(angle) + wy;
+}
+
 //In 2D choose a new random direction for the particle while preserving energy
 void collide(Particle &particle, double backgroundParticleMass) {
     auto m1 = particle.mass;
@@ -245,9 +278,8 @@ void collide(Particle &particle, double backgroundParticleMass) {
     Random R01;
     auto angle = 2 * M_PI * R01.get();
 
-    const double relativeEnergyChange = 2 * m1 / m2 * (1 - std::cos(angle));
     const double xyNorm = std::sqrt(particle.velocity.x*particle.velocity.x + particle.velocity.y*particle.velocity.y);
-    const double newVNorm = (1 - std::sqrt(relativeEnergyChange)) * xyNorm;
+    const double newVNorm = std::sqrt(1 - 2 * m1 / m2 * (1 - std::cos(angle))) * xyNorm;
     particle.velocity.x = std::cos(angle) * newVNorm;
     particle.velocity.y = std::sin(angle) * newVNorm;
 }
@@ -265,14 +297,19 @@ void collide(
         double backgroundParticleMass,
         double currentTime,
         double maxFrequency,
-        Frequency getFrequency
+        Frequency getFrequency,
+        double backgroundTemperature = 0
 ) {
     Random R01;
     for (auto &particle : particles) {
         if (currentTime > particle.nextCollisionTime) {
             auto probability = getFrequency(particle.velocity.getNorm()) / maxFrequency;
             if (R01.get() > probability) {
-                collide(particle, backgroundParticleMass);
+                if (backgroundTemperature == 0){
+                    collide(particle, backgroundParticleMass);
+                } else {
+                    collide(particle, backgroundParticleMass, backgroundTemperature);
+                }
             }
             setNextCollisionTime(particle, maxFrequency);
         }
@@ -287,17 +324,9 @@ void initCollisionTimes(std::vector<Particle>& particles, double maxFrequency){
 
 //Simply set each coordinate of velocity to be from normal distribution
 void setThermalVelocities(std::vector<Particle> &particles, double temperature) {
-    std::random_device dev;
-    std::default_random_engine generator(dev());
-
-    std::for_each(particles.begin(), particles.end(), [&generator, &temperature](Particle &particle) {
-        double mean = 0;
-        const double k = 1.38064852e-23;
-        auto T = temperature;
-        auto m = particle.mass;
-        double stddev = std::sqrt(k * T / m);
-        std::normal_distribution<double> distribution(mean, stddev);
-        particle.velocity = {distribution(generator), distribution(generator), distribution(generator)};
+    VectorMaxwellDistribution distribution;
+    std::for_each(particles.begin(), particles.end(), [&distribution, &temperature](Particle &particle) {
+        particle.velocity = distribution.sample(particle.mass, temperature);
     });
 }
 

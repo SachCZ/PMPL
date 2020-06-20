@@ -34,6 +34,10 @@ add_executable(Collisional collisional.cpp)
 target_link_libraries(Collisional Particles)
 target_compile_options(Collisional PUBLIC $<$<CONFIG:RELEASE>:-O3>)
 
+add_executable(Hot hot.cpp)
+target_link_libraries(Hot Particles)
+target_compile_options(Hot PUBLIC $<$<CONFIG:RELEASE>:-O3>)
+
 add_executable(Boris boris.cpp)
 target_link_libraries(Boris Particles)
 target_compile_options(Boris PUBLIC $<$<CONFIG:RELEASE>:-O3>)

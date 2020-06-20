@@ -5,11 +5,8 @@
 #include <cmath>
 #include <limits>
 #include <chrono>
-#include <fenv.h>
 
 int main(int argc, char *argv[]) {
-    feenableexcept(FE_INVALID | FE_OVERFLOW);
-
     double time = 0;
     int step = 0;
     double timeStep = 1e-8;
@@ -19,6 +16,7 @@ int main(int argc, char *argv[]) {
     int printAfterSteps = steps / printCount;
     double backgroundParticleMass = 6.63352088e-26;
     double maxCollisionFrequency = 1e7;
+    double temperature = 11600;
 
     const Interval side{0, 1};
     std::vector<Particle> particles = generateInRectangle(
@@ -31,10 +29,10 @@ int main(int argc, char *argv[]) {
     //main routine
     //Sample the velocities from Maxwell distribution
     //See setThermalVelocities in particles.h
-    setThermalVelocities(particles, 11600);
+    setThermalVelocities(particles, temperature);
     initCollisionTimes(particles, maxCollisionFrequency);
 
-    std::ofstream energyFile("data/collisional_energy.csv");
+    std::ofstream energyFile("data/hot_energy.csv");
     energyFile.precision(std::numeric_limits<double>::max_digits10);
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -46,9 +44,9 @@ int main(int argc, char *argv[]) {
         updatePositions(particles, timeStep);
 
         //main routine
-        //Apply collisions
+        //Apply collisions with hot background
         //see collide in particles.h
-        collide(particles, backgroundParticleMass, time, maxCollisionFrequency, [](double speed){return 0.5e7;});
+        collide(particles, backgroundParticleMass, time, maxCollisionFrequency, [](double speed){return 0.5e7;}, temperature);
 
         sideSampler.sample(particles, side);
 
@@ -73,5 +71,5 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Execution took: " << duration << "s." << std::endl;
 
-    saveTrajectories("data/collisional_trajectories.csv", particles);
+    saveTrajectories("data/hot_trajectories.csv", particles);
 }
